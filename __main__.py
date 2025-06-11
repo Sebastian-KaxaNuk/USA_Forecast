@@ -3,6 +3,7 @@ from src.usa_forecast.config_handlers.excel_configurator import ExcelConfigurato
 from src.usa_forecast.data_download import fmp_mkt_data as fmd
 from src.usa_forecast.calculations import lags_adding as la
 from src.usa_forecast.calculations import price_calculations as pc
+from src.usa_forecast.aux_functions import save_read_csv_excel as sr
 
 import logging
 import sys
@@ -75,15 +76,12 @@ for ticker in configuration.tickers:
 
 #%%
 
+final_results = pc.process_all_tickers(data_dict=results,
+                                       column="close",
+                                       lags=configuration.window_shift,
+                                       lookback=100)
 
+#%%
 
-
-
-
-
-
-
-
-
-
+sr.export_results_to_csv(results=final_results, output_dir="Output")
 
