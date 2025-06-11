@@ -1,0 +1,22 @@
+[project]
+name = "USA_Forecast"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "Sebastian Blanco Abrajan", email = "sebastian.blanco@kaxanuk.mx"},
+]
+dependencies = ["pandas>=2.3.0",
+                "openpyxl>=3.1.5",
+                "dash>=3.0.4",
+                "seaborn>=0.13.2"]
+requires-python = ">=3.12"
+readme = "README.md"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+
+[tool.pdm]
+distribution = true
