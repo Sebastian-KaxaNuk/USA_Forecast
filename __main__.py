@@ -83,5 +83,10 @@ final_results = pc.process_all_tickers(data_dict=results,
 
 #%%
 
-sr.export_results_to_csv(results=final_results, output_dir="Output")
+summary_df = pc.build_summary_dataframe(data_dict=final_results)
+
+
+#%%
+
+# sr.export_results_to_csv(results=final_results, output_dir="Output")
 

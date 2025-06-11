@@ -1,5 +1,8 @@
 import pandas as pd
 import logging
+import pyarrow as pa
+import pyarrow.compute as pc
+
 logger = logging.getLogger('myAppLogger')
 
 #%%
@@ -41,6 +44,11 @@ def add_52_week_low_column(
 
     df[output_column] = df[column].rolling(window=window_days, min_periods=1).min()
     return df
+
+def add_52_week_low_column_arrow(table: pa.Table, low_column: str = "low", output_column: str = "52_week_low") -> pa.Table:
+    df = table.to_pandas()
+    df[output_column] = df[low_column].rolling(window=252, min_periods=1).min()
+    return pa.Table.from_pandas(df)
 
 def calculate_price_targets(
     df: pd.DataFrame,
@@ -93,10 +101,8 @@ def calculate_price_targets(
         max_price_targets[f"MaxPT_{lag}"] = shifted_price * (1 + max_pct / 100)
         min_price_targets[f"MinPT_{lag}"] = shifted_price * (1 + min_pct / 100)
 
-    # Unimos todas las columnas
     df = df.assign(**max_pct_cols, **min_pct_cols, **max_price_targets, **min_price_targets)
 
-    # Calculmos ya las métricas agregadas
     maxpt_df = pd.concat(max_price_targets.values(), axis=1)
     minpt_df = pd.concat(min_price_targets.values(), axis=1)
     maxpct_df = pd.concat(max_pct_cols.values(), axis=1)
@@ -154,3 +160,63 @@ def process_all_tickers(
             logger.error(f"Error processing {ticker}: {e}")
     return results
 
+def build_summary_dataframe(data_dict: dict[str, pd.DataFrame]) -> pd.DataFrame:
+    """
+    Builds a summary DataFrame where each column is a ticker and rows are key metrics:
+    - Close: last close price
+    - High Min: MinMax
+    - High Avg: AvgMax
+    - High Max: MaxMax
+    - Low Min: MaxMin
+    - Low Avg: AvgMin
+    - Low Max: MinMin
+    - Min Price: last low
+    - High Min Adjusted: adjusted target using low and MinMax
+
+    Parameters
+    ----------
+    data_dict : dict[str, pd.DataFrame]
+        Dictionary mapping ticker to enriched DataFrame.
+
+    Returns
+    -------
+    pd.DataFrame
+        Summary table with index as metrics and columns as tickers.
+    """
+    index_labels = [
+        "Close",
+        "High Min",         # ← MinMax
+        "High Avg",         # ← AvgMax
+        "High Max",         # ← MaxMax
+        "Low Min",          # ← MaxMin
+        "Low Avg",          # ← AvgMin
+        "Low Max",          # ← MinMin
+        "Min Price",        # ← low
+    ]
+
+    summary_df = pd.DataFrame(index=index_labels)
+
+    for ticker, df in data_dict.items():
+        last = df.iloc[-1]
+
+        close = last["close"]
+        low = last["52_week_low"]
+        minmax = last["MinMax"]
+        avgmax = last["AvgMax"]
+        maxmax = last["MaxMax"]
+        maxmin = last["MaxMin"]
+        avgmin = last["AvgMin"]
+        minmin = last["MinMin"]
+
+        summary_df[ticker] = [
+            close,
+            minmax,
+            avgmax,
+            maxmax,
+            maxmin,
+            avgmin,
+            minmin,
+            low,
+        ]
+
+    return summary_df

@@ -2,7 +2,8 @@ import json
 import certifi
 from urllib.request import urlopen
 import pandas as pd
-
+import pyarrow as pa
+import pyarrow.compute as pc
 
 def get_jsonparsed_data(url: str) -> list[dict]:
     """
@@ -22,6 +23,15 @@ def get_jsonparsed_data(url: str) -> list[dict]:
     data = response.read().decode("utf-8")
     return json.loads(data)
 
+def fetch_eod_price_data_arrow(ticker: str, start_date: str, end_date: str, api_key: str) -> pa.Table:
+    url = (
+        "https://financialmodelingprep.com/stable/historical-price-eod/full"
+        f"?symbol={ticker}&from={start_date}&to={end_date}&apikey={api_key}"
+    )
+    data = get_jsonparsed_data(url)
+    if not isinstance(data, list):
+        raise ValueError(f"Unexpected format returned for {ticker}")
+    return pa.Table.from_pylist(data)
 
 def fetch_eod_price_data(
     ticker: str,

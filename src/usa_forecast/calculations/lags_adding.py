@@ -1,4 +1,6 @@
 import pandas as pd
+import pyarrow as pa
+import pyarrow.compute as pc
 
 #%%
 
@@ -47,4 +49,9 @@ def add_lagged_return_columns(
 
     return df
 
-
+# def add_lagged_return_columns_arrow(table: pa.Table, column: str, lags: list[int], prefix: str = "P") -> pa.Table:
+#     for lag in lags:
+#         shifted = pc.shift(table[column], periods=lag)
+#         pct_return = pc.multiply(pc.divide(pc.subtract(table[column], shifted), shifted), 100)
+#         table = table.append_column(f"{prefix}{lag}", pct_return)
+#     return table
