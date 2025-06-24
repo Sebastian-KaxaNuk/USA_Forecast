@@ -1,6 +1,4 @@
 import pandas as pd
-import pyarrow as pa
-import pyarrow.compute as pc
 
 #%%
 

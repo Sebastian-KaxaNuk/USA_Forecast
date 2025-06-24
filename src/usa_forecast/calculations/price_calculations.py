@@ -1,7 +1,6 @@
 import pandas as pd
 import logging
 import pyarrow as pa
-import pyarrow.compute as pc
 
 logger = logging.getLogger('myAppLogger')
 

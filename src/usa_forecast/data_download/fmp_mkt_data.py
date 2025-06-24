@@ -3,7 +3,6 @@ import certifi
 from urllib.request import urlopen
 import pandas as pd
 import pyarrow as pa
-import pyarrow.compute as pc
 
 def get_jsonparsed_data(url: str) -> list[dict]:
     """

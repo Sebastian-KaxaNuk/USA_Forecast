@@ -5,27 +5,12 @@ from src.usa_forecast.calculations import lags_adding as la
 from src.usa_forecast.calculations import price_calculations as pc
 from src.usa_forecast.aux_functions import save_read_csv_excel as sr
 
-import logging
 import sys
-
 import logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(message)s')
 logger = logging.getLogger('myAppLogger')
 
-#%%
 sys.path.extend(["src"])
-
-logger = logging.getLogger('myAppLogger')
-
-if logger.hasHandlers():
-    logger.handlers.clear()
-
-logger.setLevel(logging.INFO)
-formatter = logging.Formatter('%(levelname)s - %(message)s')
-
-console_handler = logging.StreamHandler()
-console_handler.setFormatter(formatter)
-logger.addHandler(console_handler)
 
 logger.info("Logger configured successfully.")
 
@@ -71,6 +56,8 @@ for ticker in configuration.tickers:
 
         results[ticker] = df
 
+        logger.info(f"Done for {ticker}")
+
     except Exception as e:
         logger.warning(f"Error processing ticker {ticker}: {e}")
 
@@ -84,9 +71,10 @@ final_results = pc.process_all_tickers(data_dict=results,
 #%%
 
 summary_df = pc.build_summary_dataframe(data_dict=final_results)
-
+summary_df.to_excel("Output/USA_Forecast.xlsx")
 
 #%%
 
-# sr.export_results_to_csv(results=final_results, output_dir="Output")
+sr.export_results_to_csv(results=final_results, output_dir="Output/Tickers/")
 
+logger.info("Done for all tickers")
