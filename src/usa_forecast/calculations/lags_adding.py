@@ -5,7 +5,7 @@ import pandas as pd
 def add_lagged_return_columns(
     df: pd.DataFrame,
     column: str,
-    lags: tuple[int],
+    lags: tuple[int, ...],
     prefix: str = "P"
 ) -> pd.DataFrame:
     """
