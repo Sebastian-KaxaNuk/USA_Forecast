@@ -2,6 +2,7 @@
 from src.usa_forecast.config_handlers.excel_configurator import ExcelConfigurator
 from src.usa_forecast import usa_forecast_code as fc
 from src.usa_forecast.aux_functions.open_browser_code import open_browser
+from src.usa_forecast.dashboard.dash_components.navigation import navbar
 
 #Logger
 import logging
@@ -17,7 +18,6 @@ import dash
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
-from src.usa_forecast.dashboard.dash_components.navigation import navbar
 
 #%%
 
@@ -69,5 +69,5 @@ if __name__ == "__main__":
     logger.info('-----------------------------------------')
     logger.info("Dash is running on http://127.0.0.1:8031/")
     logger.info('-----------------------------------------')
-    Timer(1, open_browser).start();
+    Timer(1, open_browser).start()
     app.run(debug=False, port=8031)

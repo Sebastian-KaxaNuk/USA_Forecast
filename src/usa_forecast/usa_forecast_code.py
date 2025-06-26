@@ -60,6 +60,8 @@ def main(
 
     results = {}
 
+    #@TODO: IMPLEMENTAR LO DE STAY UPDATE Y VER SI SE PUEDE CON THREADS LO DEL ANALISIS HISTORICO
+
     with ThreadPoolExecutor(max_workers=8) as executor:
         futures = {executor.submit(process_ticker,
                                    ticker,

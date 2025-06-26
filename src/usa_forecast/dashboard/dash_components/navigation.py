@@ -17,10 +17,10 @@ navbar = dbc.Navbar(
         dbc.Collapse(
             dbc.Nav(
                 [
-                    dbc.NavItem(dbc.NavLink("Stock Overview", href="/actuals-page", style={"color": "black", "fontWeight": "bold", "fontSize": "16px"})),  # Adjusted font-weight and font-size
-                    dbc.NavItem(dbc.NavLink("Decil Analysis", href="/decil-analysis", style={"color": "black", "fontWeight": "bold", "fontSize": "16px"})),  # Adjusted font-weight and font-size
-                    dbc.NavItem(dbc.NavLink("Sector Analysis", href="/sector-page", style={"color": "black", "fontWeight": "bold", "fontSize": "16px"})),  # Adjusted font-weight and font-size
-                    dbc.NavItem(dbc.NavLink("Portfolio Analysis", href="/portfolio-page", style={"color": "black", "fontWeight": "bold", "fontSize": "16px"})),  # Adjusted font-weight and font-size
+                    dbc.NavItem(dbc.NavLink("Target Price Table", href="/actuals-page", style={"color": "black", "fontWeight": "bold", "fontSize": "16px"})),  # Adjusted font-weight and font-size
+                    dbc.NavItem(dbc.NavLink("Heatmap Visualization", href="/decil-analysis", style={"color": "black", "fontWeight": "bold", "fontSize": "16px"})),  # Adjusted font-weight and font-size
+                    dbc.NavItem(dbc.NavLink("Historical Analysis", href="/sector-page", style={"color": "black", "fontWeight": "bold", "fontSize": "16px"})),  # Adjusted font-weight and font-size
+                    # dbc.NavItem(dbc.NavLink("Portfolio Analysis", href="/portfolio-page", style={"color": "black", "fontWeight": "bold", "fontSize": "16px"})),  # Adjusted font-weight and font-size
                     # dbc.DropdownMenu(
                     #     children=[
                     #         dbc.DropdownMenuItem("Our Community", href="", style={"color": "red"}),
