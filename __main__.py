@@ -4,6 +4,7 @@ from src.usa_forecast.data_download import fmp_mkt_data as fmd
 from src.usa_forecast.calculations import lags_adding as la
 from src.usa_forecast.calculations import price_calculations as pc
 from src.usa_forecast.aux_functions import save_read_csv_excel as sr
+from src.usa_forecast.services import historical_analysis as ha
 
 #Libraries
 import sys
@@ -85,6 +86,26 @@ final_results = pc.process_all_tickers(data_dict=results,
 
 summary_df = pc.build_summary_dataframe(data_dict=final_results)
 summary_df.to_excel("Output/USA_Forecast.xlsx")
+
+#%%
+
+all_dates = final_results[next(iter(final_results))].index
+
+#%%
+
+dates_to_process = ha.generate_summary_dates(all_dates=all_dates, configuration=configuration)
+
+#%%
+
+for date in dates_to_process:
+    snapshot_dict = ha.extract_snapshot(data_dict=final_results, snapshot_date=date)
+    summary_df = pc.build_summary_dataframe(data_dict=snapshot_dict)
+    summary_df.to_csv(f"Output/Summaries/summary_{date.date()}.csv")
+
+latest_date = max(df.index.max() for df in final_results.values())
+latest_snapshot = ha.extract_snapshot(data_dict=final_results, snapshot_date=latest_date)
+latest_summary_df = pc.build_summary_dataframe(data_dict=latest_snapshot)
+latest_summary_df.to_csv(f"Output/{latest_date}.csv")
 
 #%%
 

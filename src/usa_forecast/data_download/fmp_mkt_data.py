@@ -75,4 +75,8 @@ def fetch_eod_price_data(
     df = pd.DataFrame(data)
     df["date"] = pd.to_datetime(df["date"])
     df.set_index("date", inplace=True)
-    return df.sort_index()
+
+    drop  = ["change", "changePercent", "vwap", "symbol"]
+    df_final = df.drop(drop, axis=1)
+
+    return df_final.sort_index()

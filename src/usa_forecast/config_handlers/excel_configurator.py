@@ -29,13 +29,20 @@ import openpyxl.worksheet.cell_range
 import openpyxl.worksheet.worksheet
 import pandas as pd
 
+logger = logging.getLogger('myAppLogger')
+
 class ExcelConfigurator(ConfiguratorInterface):
 
     SHEET_KEY_VALUES = types.MappingProxyType({
         'General': (
             'start_date',
             'end_date',
-            'fmp_api_key'
+            'fmp_api_key',
+            'stay_update',
+            'summary_mode',
+            'summary_frequency',
+            'summary_start_date',
+            'summary_end_date',
         ),
     })
 
@@ -51,7 +58,7 @@ class ExcelConfigurator(ConfiguratorInterface):
     def __init__(
         self,
         file_path: str,
-        logger_format: str = "[%(levelname)s] %(message)s",
+        # logger_format: str = "[%(levelname)s] %(message)s",
         ):
         """
         Initialize configuration, input handlers and output handlers based on a configuration Excel file.
@@ -64,14 +71,14 @@ class ExcelConfigurator(ConfiguratorInterface):
             The format for the logger messages. will be injected to logging.basicConfig()
         """
         # not using logging.basicConfig as we need to close it, without affecting any existing root logger
-        logger = logging.getLogger(__name__)
+        # logger = logging.getLogger(__name__)
         # set the logging level to info by default, as we haven't loaded the file configuration yet
-        logger.setLevel(logging.INFO)
-        handler = logging.StreamHandler()
-        handler.setFormatter(
-            logging.Formatter(logger_format)
-        )
-        logger.addHandler(handler)
+        # logger.setLevel(logging.INFO)
+        # handler = logging.StreamHandler()
+        # handler.setFormatter(
+        #     logging.Formatter(logger_format)
+        # )
+        # logger.addHandler(handler)
 
         try:
             workbook = self._load_file(file_path)
@@ -94,6 +101,11 @@ class ExcelConfigurator(ConfiguratorInterface):
                 start_date=sheet_key_values['General']['start_date'].date(),
                 end_date=sheet_key_values['General']['end_date'].date(),
                 fmp_api_key=sheet_key_values['General']['fmp_api_key'],
+                stay_update=sheet_key_values['General']['stay_update'],
+                summary_mode=sheet_key_values['General']['summary_mode'],
+                summary_frequency=sheet_key_values['General']['summary_frequency'],
+                summary_start_date=sheet_key_values['General']['summary_start_date'].date(),
+                summary_end_date=sheet_key_values['General']['summary_end_date'].date(),
                 tickers=sheet_columns['Tickers']['tickers'],
                 window_shift=window_shift_converted
             )
