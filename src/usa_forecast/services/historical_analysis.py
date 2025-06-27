@@ -6,7 +6,7 @@ import pandas as pd
 FREQUENCY_MAP = {
     "weekly": "W",
     "monthly": "M",
-    "quarterly": "Q",
+    "quarterly": "QE",
     "semiannual": "2Q",
     "annual": "A"
 }

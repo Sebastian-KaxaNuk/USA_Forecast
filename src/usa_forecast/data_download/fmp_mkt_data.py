@@ -67,7 +67,7 @@ def fetch_eod_price_data(
         f"?symbol={ticker}&from={start_date}&to={end_date}&apikey={api_key}"
     )
 
-    data = get_jsonparsed_data(url)
+    data = get_jsonparsed_data(url=url)
 
     if not isinstance(data, list):
         raise ValueError(f"Unexpected data format returned from API for {ticker}")
@@ -80,3 +80,31 @@ def fetch_eod_price_data(
     df_final = df.drop(drop, axis=1)
 
     return df_final.sort_index()
+
+def fetch_eod_last_1m_price_data(ticker: str,
+                                 api_key: str) -> pd.DataFrame:
+    """
+    :param ticker:
+    :param api_key:
+    :return:
+    """
+    url_one_min = (
+        f"https://financialmodelingprep.com/api/v3/historical-chart/1min/{ticker}?apikey={api_key}"
+    )
+
+    data_one = get_jsonparsed_data(url=url_one_min)
+
+    if not isinstance(data_one, list):
+        raise ValueError(f"Unexpected data format returned from API for {ticker}")
+
+    df = pd.DataFrame(data_one)
+    df["date"] = pd.to_datetime(df["date"])
+    df.set_index("date", inplace=True)
+    df = df.sort_index()
+
+    last_data = df.tail(1)
+
+    del df
+
+    return last_data
+
