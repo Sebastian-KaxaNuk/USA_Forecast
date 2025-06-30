@@ -4,11 +4,15 @@ from src.usa_forecast import usa_forecast_code as fc
 from src.usa_forecast.aux_functions.open_browser_code import open_browser
 from src.usa_forecast.dashboard.dash_components.navigation import navbar
 from src.usa_forecast.services.update_logic import update_with_latest_data
+from src.usa_forecast.calculations import build_forecast_summary_table as bf
+from src.usa_forecast.services import historical_analysis as ha
+
+import pandas as pd
+from datetime import datetime
 
 #Logger
 import logging
 from threading import Timer
-import pandas as pd
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(message)s')
 logger = logging.getLogger('myAppLogger')
@@ -35,65 +39,34 @@ final_dict, mkt_data = fc.main(configuration=configuration)
 
 #%%
 
-#@TODO: NO QUITAR LAS COLUMNAS
-reload = False
+reload = True
 
 if reload:
     final_dict, mkt_data = update_with_latest_data(configuration=configuration, mkt_data=mkt_data)
 
 #%%
 
-def build_forecast_summary_table(
-    data_dict: dict[str, pd.DataFrame]
-) -> pd.DataFrame:
-    """
-    Builds a summary table for each ticker with key price indicators and trading signals.
+forecast_tables_dict: dict[datetime.date, pd.DataFrame] = {}
 
-    Parameters
-    ----------
-    data_dict : dict[str, pd.DataFrame]
-        Dictionary where keys are tickers and values are DataFrames containing:
-        'close', 'HighMin', 'HighMax', 'LowMin', 'LowMax' columns.
+for snapshot_date, snapshot_data in final_dict.items():
+    try:
+        forecast_table = bf.build_forecast_summary_table(data_dict=mkt_data)
+        forecast_tables_dict[snapshot_date] = forecast_table
+    except Exception as e:
+        logger.warning(f"Error building forecast table for {snapshot_date}: {e}")
 
-    Returns
-    -------
-    pd.DataFrame
-        Summary DataFrame with tickers as index and columns:
-        ['Precio actual', 'Compra a partir de', 'Precio Mínimo que puede llegar',
-         'Vender a partir de', 'Precio Máximo que puede alcanzar', 'Rate']
-    """
-    summary_records = []
+latest_timestamp = max(df.index.max() for df in mkt_data.values())  # esto es Timestamp
+latest_snapshot = ha.extract_snapshot(data_dict=mkt_data, snapshot_date=latest_timestamp)
 
-    for ticker, df in data_dict.items():
-        try:
-            last_row = df.iloc[-1]
+latest_forecast_table = bf.build_forecast_summary_table(data_dict=latest_snapshot)
 
-            close = last_row["close"]
-            high_min = last_row["MaxMin"]
-            high_max = last_row["MaxMax"]
-            low_min = last_row["MinMin"]
-            low_max = last_row["MinMax"]
+forecast_tables_dict[latest_timestamp.date()] = latest_forecast_table
 
-            vender_a_partir_de = high_min if high_min < close else high_min
-            rate = (low_min / close) - 1
+#%%
 
-            summary_records.append({
-                "Ticker": ticker,
-                "Precio actual": close,
-                "Compra a partir de": low_min,
-                "Precio Mínimo que puede llegar": low_max,
-                "Vender a partir de": vender_a_partir_de,
-                "Precio Máximo que puede alcanzar": high_max,
-                "Rate": rate
-            })
+keys = list(forecast_tables_dict.keys())
 
-        except Exception as e:
-            logging.warning(f"[{ticker}] Error building summary: {e}")
-
-    return pd.DataFrame(summary_records).set_index("Ticker")
-
-summary_table = build_forecast_summary_table(data_dict=final_dict)
-
+df = forecast_tables_dict[keys[0]]
 
 #%%
 
