@@ -6,6 +6,8 @@ from src.usa_forecast.dashboard.dash_components.navigation import navbar
 from src.usa_forecast.services.update_logic import update_with_latest_data
 from src.usa_forecast.calculations import build_forecast_summary_table as bf
 from src.usa_forecast.services import historical_analysis as ha
+from src.usa_forecast.dashboard.app_callback import app_callback
+from src.usa_forecast.dashboard.callbacks.target_price_table_callback import register_callback_actuals
 
 import pandas as pd
 from datetime import datetime
@@ -39,6 +41,12 @@ final_dict, mkt_data = fc.main(configuration=configuration)
 
 #%%
 
+periods = list(final_dict.keys())
+
+df = final_dict[periods[0]]
+
+#%%
+
 reload = True
 
 if reload:
@@ -55,7 +63,9 @@ for snapshot_date, snapshot_data in final_dict.items():
     except Exception as e:
         logger.warning(f"Error building forecast table for {snapshot_date}: {e}")
 
-latest_timestamp = max(df.index.max() for df in mkt_data.values())  # esto es Timestamp
+#%%
+
+latest_timestamp = max(df.index.max() for df in mkt_data.values())
 latest_snapshot = ha.extract_snapshot(data_dict=mkt_data, snapshot_date=latest_timestamp)
 
 latest_forecast_table = bf.build_forecast_summary_table(data_dict=latest_snapshot)
@@ -64,9 +74,9 @@ forecast_tables_dict[latest_timestamp.date()] = latest_forecast_table
 
 #%%
 
-keys = list(forecast_tables_dict.keys())
+periods = list(forecast_tables_dict.keys())
 
-df = forecast_tables_dict[keys[0]]
+df_test = forecast_tables_dict[periods[0]]
 
 #%%
 
@@ -100,7 +110,8 @@ app.layout = html.Div([
     )
 ])
 
-#%%
+app_callback(app, final_dict)
+register_callback_actuals(app, final_dict)
 
 if __name__ == "__main__":
     logger.info('-----------------------------------------')

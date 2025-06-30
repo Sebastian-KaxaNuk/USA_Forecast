@@ -180,6 +180,7 @@ def main(configuration: Configuration) -> tuple[dict[str, pd.DataFrame | None], 
         latest_snapshot = ha.extract_snapshot(data_dict=final_results, snapshot_date=latest_date)
         latest_summary_df = pc.build_summary_dataframe(data_dict=latest_snapshot)
         latest_summary_df.to_csv(f"Output/Historical_Summaries/{latest_date.date()}.csv")
+        final_dict[latest_date.date()] = latest_summary_df
 
     sr.export_results_to_csv(results=final_results, output_dir="Output/Tickers/")
 

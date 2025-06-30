@@ -5,7 +5,7 @@
 groups = ["default"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:818e8f8be4601afc4fd9d1329f2a122019b2381f8c7c2f71ad1bccfec08ba17d"
+content_hash = "sha256:0e18a5f2cba16a0dfe326074cb7437c7ba97c9592d4b7751682263d0678feb06"
 
 [[metadata.targets]]
 requires_python = ">=3.12"
@@ -203,6 +203,16 @@ groups = ["default"]
 files = [
     {file = "dash_html_components-2.0.0-py3-none-any.whl", hash = "sha256:b42cc903713c9706af03b3f2548bda4be7307a7cf89b7d6eae3da872717d1b63"},
     {file = "dash_html_components-2.0.0.tar.gz", hash = "sha256:8703a601080f02619a6390998e0b3da4a5daabe97a1fd7a9cebc09d015f26e50"},
+]
+
+[[package]]
+name = "dash-table"
+version = "5.0.0"
+summary = "Dash table"
+groups = ["default"]
+files = [
+    {file = "dash_table-5.0.0-py3-none-any.whl", hash = "sha256:19036fa352bb1c11baf38068ec62d172f0515f73ca3276c79dee49b95ddc16c9"},
+    {file = "dash_table-5.0.0.tar.gz", hash = "sha256:18624d693d4c8ef2ddec99a6f167593437a7ea0bf153aa20f318c170c5bc7308"},
 ]
 
 [[package]]
