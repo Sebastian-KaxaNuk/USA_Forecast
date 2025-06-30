@@ -3,6 +3,9 @@ import dash_table
 import dash_html_components as html
 import pandas as pd
 import dash
+from dash.dash_table.Format import Format, Scheme, Symbol
+from dash import exceptions
+
 from src.usa_forecast.calculations import build_forecast_summary_table as bf
 from src.usa_forecast.services import historical_analysis as ha
 from src.usa_forecast.services.update_logic import update_with_latest_data
@@ -42,6 +45,89 @@ def register_callback_forecast_table(app, configuration, mkt_data):
 
         raise dash.exceptions.PreventUpdate
 
+    # @app.callback(
+    #     Output('table_front-output', 'children'),
+    #     Input('submit-button_front', 'n_clicks'),
+    #     State('period-dropdown1_front', 'value'),
+    #     State('store_forecast', 'data')
+    # )
+    #
+    # def render_forecast_table(n_clicks, selected_period_str, store_data):
+    #     if n_clicks and selected_period_str and store_data:
+    #         df_dict = store_data.get(selected_period_str)
+    #         if df_dict is None:
+    #             return html.Div("No data available for the selected period.")
+    #
+    #         df = pd.DataFrame(**df_dict)
+    #         df.reset_index(inplace=True)
+    #         if df.columns[0] == "index":
+    #             df.rename(columns={"index": "Ticker"}, inplace=True)
+    #
+    #         numeric_cols = df.select_dtypes(include='number').columns
+    #         df[numeric_cols] = df[numeric_cols].round(2)
+    #
+    #         # Define formato por columna
+    #         columns = []
+    #         for col in df.columns:
+    #             if col == "Rate":
+    #                 fmt = Format(precision=2, scheme=Scheme.percentage)
+    #                 columns.append({"name": col, "id": col, "type": "numeric", "format": fmt})
+    #             elif col == "Ticker":
+    #                 columns.append({"name": col, "id": col})
+    #             elif col in numeric_cols:
+    #                 fmt = Format(precision=2, scheme=Scheme.fixed).symbol(Symbol.yes).symbol_prefix('$')
+    #                 columns.append({"name": col, "id": col, "type": "numeric", "format": fmt})
+    #             else:
+    #                 columns.append({"name": col, "id": col})
+    #
+    #         return html.Div([
+    #             html.H4(
+    #                 f"Forecast Summary — Period: {selected_period_str}",
+    #                 style={
+    #                     "textAlign": "center",
+    #                     "fontFamily": "Arial",
+    #                     "fontWeight": "bold",
+    #                     "marginBottom": "20px",
+    #                     "marginTop": "10px"
+    #                 }
+    #             ),
+    #             dash_table.DataTable(
+    #                 columns=columns,
+    #                 data=df.to_dict("records"),
+    #                 page_size=15,
+    #                 fixed_rows={"headers": True},
+    #                 filter_action="native",
+    #                 sort_action="native",
+    #                 sort_mode="multi",
+    #                 style_table={'overflowX': 'auto', 'width': '100%', 'minWidth': '100%'},
+    #                 style_cell={
+    #                     "textAlign": "center", "fontFamily": "Arial", "padding": "6px",
+    #                     "whiteSpace": "normal", "minWidth": "150px", "maxWidth": "300px"
+    #                 },
+    #                 style_cell_conditional=[
+    #                     {
+    #                         'if': {'column_id': 'Ticker'},
+    #                         'textAlign': 'left',
+    #                         'width': '300px',
+    #                         'minWidth': '150px',
+    #                         'maxWidth': '300px'
+    #                     }
+    #                 ],
+    #                 style_header={
+    #                     'fontWeight': 'bold',
+    #                     'backgroundColor': 'rgb(230, 230, 230)',
+    #                     'border': '1px solid black',
+    #                     'textAlign': 'center'
+    #                 },
+    #                 style_data={
+    #                     'border': '1px solid grey',
+    #                     'fontSize': '1rem'
+    #                 }
+    #             )
+    #         ])
+    #
+    #     return html.Div("Please select a period and press Submit.")
+
     @app.callback(
         Output('table_front-output', 'children'),
         Input('submit-button_front', 'n_clicks'),
@@ -49,70 +135,86 @@ def register_callback_forecast_table(app, configuration, mkt_data):
         State('store_forecast', 'data')
     )
     def render_forecast_table(n_clicks, selected_period_str, store_data):
-        if n_clicks and selected_period_str and store_data:
-            df_dict = store_data.get(selected_period_str)
-            if df_dict is None:
-                return html.Div("No data available for the selected period.")
+        if n_clicks is None or n_clicks == 0:
+            raise exceptions.PreventUpdate
 
-            df = pd.DataFrame(**df_dict)
-            df.reset_index(inplace=True)
-            if df.columns[0] == "index":
-                df.rename(columns={"index": "Ticker"}, inplace=True)
+        if not selected_period_str or not store_data:
+            return html.Div("Please select a period and try again.")
 
-            numeric_cols = df.select_dtypes(include='number').columns
-            df[numeric_cols] = df[numeric_cols].round(2)
+        # Asegura que la clave sea string
+        df_dict = store_data.get(str(selected_period_str))
+        if df_dict is None:
+            return html.Div("No data available for the selected period.")
 
-            return html.Div([
-                html.H4(
-                    f"Forecast Summary — Period: {selected_period_str}",
-                    style={
-                        "textAlign": "center",
-                        "fontFamily": "Arial",
-                        "fontWeight": "bold",
-                        "marginBottom": "20px",
-                        "marginTop": "10px"
+        # Construir el DataFrame
+        df = pd.DataFrame(**df_dict)
+        df.reset_index(inplace=True)
+        if df.columns[0] == "index":
+            df.rename(columns={"index": "Ticker"}, inplace=True)
+
+        # Redondear numéricos
+        numeric_cols = df.select_dtypes(include='number').columns
+        df[numeric_cols] = df[numeric_cols].round(2)
+
+        # Crear columnas con formato
+        from dash.dash_table.Format import Format, Scheme, Symbol
+        import dash_table
+
+        columns = []
+        for col in df.columns:
+            if col == "Rate":
+                fmt = Format(precision=2, scheme=Scheme.percentage)
+                columns.append({"name": col, "id": col, "type": "numeric", "format": fmt})
+            elif col == "Ticker":
+                columns.append({"name": col, "id": col})
+            elif col in numeric_cols:
+                fmt = Format(precision=2, scheme=Scheme.fixed).symbol(Symbol.yes).symbol_prefix('$')
+                columns.append({"name": col, "id": col, "type": "numeric", "format": fmt})
+            else:
+                columns.append({"name": col, "id": col})
+
+        return html.Div([
+            html.H4(
+                f"Forecast Summary — Period: {selected_period_str}",
+                style={
+                    "textAlign": "center",
+                    "fontFamily": "Arial",
+                    "fontWeight": "bold",
+                    "marginBottom": "20px",
+                    "marginTop": "10px"
+                }
+            ),
+            dash_table.DataTable(
+                columns=columns,
+                data=df.to_dict("records"),
+                page_size=15,
+                fixed_rows={"headers": True},
+                filter_action="native",
+                sort_action="native",
+                sort_mode="multi",
+                style_table={'overflowX': 'auto', 'width': '100%', 'minWidth': '100%'},
+                style_cell={
+                    "textAlign": "center", "fontFamily": "Arial", "padding": "6px",
+                    "whiteSpace": "normal", "minWidth": "150px", "maxWidth": "300px"
+                },
+                style_cell_conditional=[
+                    {
+                        'if': {'column_id': 'Ticker'},
+                        'textAlign': 'left',
+                        'width': '300px',
+                        'minWidth': '150px',
+                        'maxWidth': '300px'
                     }
-                ),
-                dash_table.DataTable(
-                    columns=[{"name": col, "id": col} for col in df.columns],
-                    data=df.to_dict("records"),
-                    page_size=20,
-                    fixed_rows={"headers": True},
-                    fixed_columns={"headers": True, "data": 1},
-                    filter_action="native",
-                    sort_action="native",
-                    sort_mode="multi",
-                    page_action="native",
-                    page_current=0,
-                    style_table={
-                        'overflowX': 'auto',
-                        'width': '100%',
-                        'minWidth': '100%'
-                    },
-                    style_cell={
-                        "textAlign": "center",
-                        "fontFamily": "Arial",
-                        "padding": "6px",
-                        "whiteSpace": "normal",
-                        "minWidth": "150px",
-                        "maxWidth": "300px"
-                    },
-                    style_header={
-                        'fontWeight': 'bold',
-                        'textAlign': 'center',
-                        'backgroundColor': 'rgb(230, 230, 230)',
-                        'color': 'black',
-                        'border': '1px solid black'
-                    },
-                    style_data={
-                        'textAlign': 'center',
-                        'fontFamily': 'Arial',
-                        'overflow': 'hidden',
-                        'textOverflow': 'ellipsis',
-                        'fontSize': '1rem',
-                        'border': '1px solid grey'
-                    }
-                )
-            ])
-
-        return html.Div("Please select a period and press Submit.")
+                ],
+                style_header={
+                    'fontWeight': 'bold',
+                    'backgroundColor': 'rgb(230, 230, 230)',
+                    'border': '1px solid black',
+                    'textAlign': 'center'
+                },
+                style_data={
+                    'border': '1px solid grey',
+                    'fontSize': '1rem'
+                }
+            )
+        ])

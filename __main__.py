@@ -53,12 +53,22 @@ final_dict, mkt_data = fc.main(configuration=configuration)
 
 forecast_tables_dict: dict[datetime.date, pd.DataFrame] = {}
 
-for snapshot_date, snapshot_data in final_dict.items():
+for snapshot_date in final_dict.keys():
     try:
-        forecast_table = bf.build_forecast_summary_table(data_dict=mkt_data)
+        snapshot_ts = pd.Timestamp(snapshot_date)  # <-- CONVERSIÓN EXPLÍCITA
+        snapshot = ha.extract_snapshot(data_dict=mkt_data, snapshot_date=snapshot_ts)
+        forecast_table = bf.build_forecast_summary_table(data_dict=snapshot)
         forecast_tables_dict[snapshot_date] = forecast_table
     except Exception as e:
         logger.warning(f"Error building forecast table for {snapshot_date}: {e}")
+
+#%%
+
+lista1 = list(forecast_tables_dict.keys())
+
+df1 = forecast_tables_dict[lista1[0]]
+df2 = forecast_tables_dict[lista1[1]]
+
 
 #%%
 
@@ -68,12 +78,6 @@ latest_snapshot = ha.extract_snapshot(data_dict=mkt_data, snapshot_date=latest_t
 latest_forecast_table = bf.build_forecast_summary_table(data_dict=latest_snapshot)
 
 forecast_tables_dict[latest_timestamp.date()] = latest_forecast_table
-
-#%%
-
-periods = list(forecast_tables_dict.keys())
-
-df_test = forecast_tables_dict[periods[0]]
 
 #%%
 

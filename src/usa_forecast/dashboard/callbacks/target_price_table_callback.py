@@ -5,6 +5,8 @@ import dash_html_components as html
 import pandas as pd
 import dash
 from usa_forecast.services.update_logic import update_with_latest_data
+from dash_table.Format import Format, Scheme, Symbol
+
 import logging
 #logging
 logger = logging.getLogger('myAppLogger')
@@ -51,11 +53,20 @@ def register_callback_actuals(app, configuration, mkt_data):
                 df = df[cols + selected_tickers]
             numeric_cols = df.select_dtypes(include='number').columns
             df[numeric_cols] = df[numeric_cols].round(2)
+
+            columns = []
+            for col in df.columns:
+                if col in numeric_cols:
+                    fmt = Format(precision=2, scheme=Scheme.fixed).symbol(Symbol.yes).symbol_prefix('$')
+                    columns.append({"name": col, "id": col, "type": "numeric", "format": fmt})
+                else:
+                    columns.append({"name": col, "id": col})
+
             return html.Div([
                 html.H4(f"Forecast Summary — Period: {selected_period_str}",
                         style={"textAlign": "center", "fontFamily": "Arial", "fontWeight": "bold"}),
                 dash_table.DataTable(
-                    columns=[{"name": col, "id": col} for col in df.columns],
+                    columns=columns,
                     data=df.to_dict("records"),
                     page_size=12,
                     fixed_rows={"headers": True},
