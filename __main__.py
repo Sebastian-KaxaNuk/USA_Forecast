@@ -8,6 +8,7 @@ from src.usa_forecast.calculations import build_forecast_summary_table as bf
 from src.usa_forecast.services import historical_analysis as ha
 from src.usa_forecast.dashboard.app_callback import app_callback
 from src.usa_forecast.dashboard.callbacks.target_price_table_callback import register_callback_actuals
+from src.usa_forecast.dashboard.layouts.target_price_table_layout import actuals_layout
 
 import pandas as pd
 from datetime import datetime
@@ -39,18 +40,23 @@ configuration = configurator.get_configuration()
 
 final_dict, mkt_data = fc.main(configuration=configuration)
 
+
+initial_store_data = {
+    str(k): df.to_dict(orient="split") for k, df in final_dict.items()
+}
+
 #%%
 
-periods = list(final_dict.keys())
-
-df = final_dict[periods[0]]
+# periods = list(final_dict.keys())
+#
+# df = final_dict[periods[0]]
 
 #%%
 
-reload = True
-
-if reload:
-    final_dict, mkt_data = update_with_latest_data(configuration=configuration, mkt_data=mkt_data)
+# reload = False
+#
+# if reload:
+#     final_dict, mkt_data = update_with_latest_data(configuration=configuration, mkt_data=mkt_data)
 
 #%%
 
@@ -85,7 +91,7 @@ app = dash.Dash(__name__, suppress_callback_exceptions=True, external_stylesheet
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     navbar,
-    html.Div(id='page-content'),
+    html.Div(id='page-content', children=actuals_layout(final_dict)),
     html.Footer(
         html.Div(
             [
@@ -111,7 +117,7 @@ app.layout = html.Div([
 ])
 
 app_callback(app, final_dict)
-register_callback_actuals(app, final_dict)
+register_callback_actuals(app, configuration, mkt_data)
 
 if __name__ == "__main__":
     logger.info('-----------------------------------------')
