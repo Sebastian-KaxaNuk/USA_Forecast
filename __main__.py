@@ -1,14 +1,14 @@
 #Personal Modules
-from src.usa_forecast.config_handlers.excel_configurator import ExcelConfigurator
-from src.usa_forecast import usa_forecast_code as fc
-from src.usa_forecast.aux_functions.open_browser_code import open_browser
-from src.usa_forecast.dashboard.dash_components.navigation import navbar
-from src.usa_forecast.services.update_logic import update_with_latest_data
-from src.usa_forecast.calculations import build_forecast_summary_table as bf
-from src.usa_forecast.services import historical_analysis as ha
-from src.usa_forecast.dashboard.app_callback import app_callback
-from src.usa_forecast.dashboard.callbacks.target_price_table_callback import register_callback_actuals
-from src.usa_forecast.dashboard.layouts.target_price_table_layout import actuals_layout
+from usa_forecast.config_handlers.excel_configurator import ExcelConfigurator
+from usa_forecast import usa_forecast_code as fc
+from usa_forecast.aux_functions.open_browser_code import open_browser
+from usa_forecast.dashboard.dash_components.navigation import navbar
+from usa_forecast.calculations import build_forecast_summary_table as bf
+from usa_forecast.services import historical_analysis as ha
+from usa_forecast.dashboard.app_callback import app_callback
+from usa_forecast.dashboard.callbacks.target_price_table_callback import register_callback_actuals
+from usa_forecast.dashboard.layouts.target_price_table_layout import actuals_layout
+from usa_forecast.dashboard.callbacks.front_callback import register_callback_forecast_table
 
 import pandas as pd
 from datetime import datetime
@@ -28,6 +28,15 @@ import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 
+import sys
+import os
+current_dir = os.getcwd()
+
+src_path = os.path.normpath(os.path.join(current_dir, 'src'))
+
+if src_path not in sys.path:
+    sys.path.append(src_path)
+
 #%%
 
 configurator = ExcelConfigurator(
@@ -39,24 +48,6 @@ configuration = configurator.get_configuration()
 #%%
 
 final_dict, mkt_data = fc.main(configuration=configuration)
-
-
-initial_store_data = {
-    str(k): df.to_dict(orient="split") for k, df in final_dict.items()
-}
-
-#%%
-
-# periods = list(final_dict.keys())
-#
-# df = final_dict[periods[0]]
-
-#%%
-
-# reload = False
-#
-# if reload:
-#     final_dict, mkt_data = update_with_latest_data(configuration=configuration, mkt_data=mkt_data)
 
 #%%
 
@@ -116,8 +107,9 @@ app.layout = html.Div([
     )
 ])
 
-app_callback(app, final_dict)
+app_callback(app, final_dict, forecast_tables_dict)
 register_callback_actuals(app, configuration, mkt_data)
+register_callback_forecast_table(app, configuration, mkt_data)
 
 if __name__ == "__main__":
     logger.info('-----------------------------------------')

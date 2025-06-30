@@ -10,10 +10,10 @@ init:
 import types
 import typing
 
-from src.usa_forecast.entities.configuration import Configuration
-from src.usa_forecast.config_handlers.configurator_interface import ConfiguratorInterface
+from usa_forecast.entities.configuration import Configuration
+from usa_forecast.config_handlers.configurator_interface import ConfiguratorInterface
 
-from src.usa_forecast.exceptions import (
+from usa_forecast.exceptions import (
     ConfigurationError,
     ConfigurationHandlerError
 )

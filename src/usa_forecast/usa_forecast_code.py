@@ -1,10 +1,10 @@
 #Modules
-from src.usa_forecast.data_download import fmp_mkt_data as fmd
-from src.usa_forecast.calculations import lags_adding as la
-from src.usa_forecast.calculations import price_calculations as pc
-from src.usa_forecast.aux_functions import save_read_csv_excel as sr
-from src.usa_forecast.services import historical_analysis as ha
-from src.usa_forecast.entities.configuration import Configuration
+from usa_forecast.data_download import fmp_mkt_data as fmd
+from usa_forecast.calculations import lags_adding as la
+from usa_forecast.calculations import price_calculations as pc
+from usa_forecast.aux_functions import save_read_csv_excel as sr
+from usa_forecast.services import historical_analysis as ha
+from usa_forecast.entities.configuration import Configuration
 
 #Libraries
 import logging

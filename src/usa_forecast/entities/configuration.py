@@ -1,4 +1,4 @@
-from src.usa_forecast.exceptions import ConfigurationError
+from usa_forecast.exceptions import ConfigurationError
 import datetime
 import dataclasses
 
