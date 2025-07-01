@@ -2,13 +2,14 @@
 from usa_forecast.config_handlers.excel_configurator import ExcelConfigurator
 from usa_forecast import usa_forecast_code as fc
 from usa_forecast.aux_functions.open_browser_code import open_browser
-from usa_forecast.dashboard.dash_components.navigation import navbar
+# from usa_forecast.dashboard.dash_components.navigation import navbar
 from usa_forecast.calculations import build_forecast_summary_table as bf
 from usa_forecast.services import historical_analysis as ha
 from usa_forecast.dashboard.app_callback import app_callback
 from usa_forecast.dashboard.callbacks.target_price_table_callback import register_callback_actuals
 from usa_forecast.dashboard.layouts.target_price_table_layout import actuals_layout
 from usa_forecast.dashboard.callbacks.front_callback import register_callback_forecast_table
+from usa_forecast.dashboard.callbacks.heatmap_callback import register_callback_show_p_columns
 
 import pandas as pd
 from datetime import datetime
@@ -55,7 +56,7 @@ forecast_tables_dict: dict[datetime.date, pd.DataFrame] = {}
 
 for snapshot_date in final_dict.keys():
     try:
-        snapshot_ts = pd.Timestamp(snapshot_date)  # <-- CONVERSIÓN EXPLÍCITA
+        snapshot_ts = pd.Timestamp(snapshot_date)
         snapshot = ha.extract_snapshot(data_dict=mkt_data, snapshot_date=snapshot_ts)
         forecast_table = bf.build_forecast_summary_table(data_dict=snapshot)
         forecast_tables_dict[snapshot_date] = forecast_table
@@ -81,11 +82,15 @@ forecast_tables_dict[latest_timestamp.date()] = latest_forecast_table
 
 #%%
 
+from dash.dependencies import Input, Output
+from usa_forecast.dashboard.dash_components.navigation import build_navbar
+
 app = dash.Dash(__name__, suppress_callback_exceptions=True, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
-    navbar,
+    # navbar,
+    html.Div(id="navbar-container"),
     html.Div(id='page-content', children=actuals_layout(final_dict)),
     html.Footer(
         html.Div(
@@ -111,7 +116,15 @@ app.layout = html.Div([
     )
 ])
 
-app_callback(app, final_dict, forecast_tables_dict)
+@app.callback(
+    Output("navbar-container", "children"),
+    Input("url", "pathname")
+)
+def update_navbar(pathname):
+    return build_navbar(pathname or "/target_price-page")
+
+app_callback(app, final_dict, forecast_tables_dict, mkt_data)
+register_callback_show_p_columns(app, mkt_data)
 register_callback_actuals(app, configuration, mkt_data)
 register_callback_forecast_table(app, configuration, mkt_data)
 

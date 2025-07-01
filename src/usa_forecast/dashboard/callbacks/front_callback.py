@@ -45,89 +45,6 @@ def register_callback_forecast_table(app, configuration, mkt_data):
 
         raise dash.exceptions.PreventUpdate
 
-    # @app.callback(
-    #     Output('table_front-output', 'children'),
-    #     Input('submit-button_front', 'n_clicks'),
-    #     State('period-dropdown1_front', 'value'),
-    #     State('store_forecast', 'data')
-    # )
-    #
-    # def render_forecast_table(n_clicks, selected_period_str, store_data):
-    #     if n_clicks and selected_period_str and store_data:
-    #         df_dict = store_data.get(selected_period_str)
-    #         if df_dict is None:
-    #             return html.Div("No data available for the selected period.")
-    #
-    #         df = pd.DataFrame(**df_dict)
-    #         df.reset_index(inplace=True)
-    #         if df.columns[0] == "index":
-    #             df.rename(columns={"index": "Ticker"}, inplace=True)
-    #
-    #         numeric_cols = df.select_dtypes(include='number').columns
-    #         df[numeric_cols] = df[numeric_cols].round(2)
-    #
-    #         # Define formato por columna
-    #         columns = []
-    #         for col in df.columns:
-    #             if col == "Rate":
-    #                 fmt = Format(precision=2, scheme=Scheme.percentage)
-    #                 columns.append({"name": col, "id": col, "type": "numeric", "format": fmt})
-    #             elif col == "Ticker":
-    #                 columns.append({"name": col, "id": col})
-    #             elif col in numeric_cols:
-    #                 fmt = Format(precision=2, scheme=Scheme.fixed).symbol(Symbol.yes).symbol_prefix('$')
-    #                 columns.append({"name": col, "id": col, "type": "numeric", "format": fmt})
-    #             else:
-    #                 columns.append({"name": col, "id": col})
-    #
-    #         return html.Div([
-    #             html.H4(
-    #                 f"Forecast Summary — Period: {selected_period_str}",
-    #                 style={
-    #                     "textAlign": "center",
-    #                     "fontFamily": "Arial",
-    #                     "fontWeight": "bold",
-    #                     "marginBottom": "20px",
-    #                     "marginTop": "10px"
-    #                 }
-    #             ),
-    #             dash_table.DataTable(
-    #                 columns=columns,
-    #                 data=df.to_dict("records"),
-    #                 page_size=15,
-    #                 fixed_rows={"headers": True},
-    #                 filter_action="native",
-    #                 sort_action="native",
-    #                 sort_mode="multi",
-    #                 style_table={'overflowX': 'auto', 'width': '100%', 'minWidth': '100%'},
-    #                 style_cell={
-    #                     "textAlign": "center", "fontFamily": "Arial", "padding": "6px",
-    #                     "whiteSpace": "normal", "minWidth": "150px", "maxWidth": "300px"
-    #                 },
-    #                 style_cell_conditional=[
-    #                     {
-    #                         'if': {'column_id': 'Ticker'},
-    #                         'textAlign': 'left',
-    #                         'width': '300px',
-    #                         'minWidth': '150px',
-    #                         'maxWidth': '300px'
-    #                     }
-    #                 ],
-    #                 style_header={
-    #                     'fontWeight': 'bold',
-    #                     'backgroundColor': 'rgb(230, 230, 230)',
-    #                     'border': '1px solid black',
-    #                     'textAlign': 'center'
-    #                 },
-    #                 style_data={
-    #                     'border': '1px solid grey',
-    #                     'fontSize': '1rem'
-    #                 }
-    #             )
-    #         ])
-    #
-    #     return html.Div("Please select a period and press Submit.")
-
     @app.callback(
         Output('table_front-output', 'children'),
         Input('submit-button_front', 'n_clicks'),
@@ -141,12 +58,10 @@ def register_callback_forecast_table(app, configuration, mkt_data):
         if not selected_period_str or not store_data:
             return html.Div("Please select a period and try again.")
 
-        # Asegura que la clave sea string
         df_dict = store_data.get(str(selected_period_str))
         if df_dict is None:
             return html.Div("No data available for the selected period.")
 
-        # Construir el DataFrame
         df = pd.DataFrame(**df_dict)
         df.reset_index(inplace=True)
         if df.columns[0] == "index":
