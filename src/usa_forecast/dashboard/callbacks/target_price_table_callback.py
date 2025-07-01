@@ -68,7 +68,7 @@ def register_callback_actuals(app, configuration, mkt_data):
                 dash_table.DataTable(
                     columns=columns,
                     data=df.to_dict("records"),
-                    page_size=12,
+                    page_size=30,
                     fixed_rows={"headers": True},
                     fixed_columns={"headers": True, "data": 1},
                     filter_action="native",

@@ -186,4 +186,4 @@ def main(configuration: Configuration) -> tuple[dict[str, pd.DataFrame | None], 
 
     logger.info("Done for all tickers")
 
-    return final_dict, results
+    return final_dict, final_results

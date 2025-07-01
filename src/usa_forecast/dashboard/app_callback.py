@@ -20,7 +20,7 @@ def app_callback(app, final_dict, forecast_tables_dict, mkt_data):
             return actuals_layout(periods_dict=final_dict)
         elif pathname == '/target_price-page':
             return front_layout(forecast_tables_dict)
-        elif pathname == '/':  # redirige la ruta raíz a page1.layout
+        elif pathname == '/':
             return actuals_layout(periods_dict=final_dict)
         else:
             return '404 Página no encontrada'

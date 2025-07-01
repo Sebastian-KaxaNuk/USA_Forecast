@@ -105,7 +105,7 @@ def register_callback_show_p_columns(app, mkt_data: dict):
             return html.Div("No P-columns found for this ticker.")
 
         filtered_df = df[p_columns].copy()
-        filtered_df = filtered_df.tail(252).copy()
+        filtered_df = filtered_df.tail(200).copy()
         filtered_df["Date"] = filtered_df.index.strftime("%Y-%m-%d")
         filtered_df.reset_index(drop=True, inplace=True)
 
