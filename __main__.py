@@ -9,6 +9,7 @@ from usa_forecast.dashboard.callbacks.target_price_table_callback import registe
 from usa_forecast.dashboard.layouts.target_price_table_layout import actuals_layout
 from usa_forecast.dashboard.callbacks.front_callback import register_callback_forecast_table
 from usa_forecast.dashboard.callbacks.heatmap_callback import register_callback_show_p_columns
+from usa_forecast.dashboard.callbacks.plot_callback import register_callback_candlestick_chart
 from dash.dependencies import Input, Output
 from usa_forecast.dashboard.dash_components.navigation import build_navbar
 
@@ -131,6 +132,7 @@ app_callback(app, final_dict, forecast_tables_dict, mkt_data)
 register_callback_show_p_columns(app, mkt_data)
 register_callback_actuals(app, configuration, mkt_data)
 register_callback_forecast_table(app, configuration, mkt_data)
+register_callback_candlestick_chart(app, mkt_data)
 
 if __name__ == "__main__":
     logger.info('-----------------------------------------')

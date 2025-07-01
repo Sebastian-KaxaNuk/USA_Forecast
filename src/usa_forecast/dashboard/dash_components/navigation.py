@@ -33,6 +33,8 @@ def build_navbar(pathname: str) -> dbc.Navbar:
                         dbc.NavItem(dbc.NavLink("Heatmap", href="/heatmap_analysis-page", style=style("/heatmap_analysis-page"))),
                         dbc.NavItem(dbc.NavLink("Target Price Table", href="/target_price-page", style=style("/target_price-page"))),
                         dbc.NavItem(dbc.NavLink("Final Data Historical", href="/final_data_historical-page", style=style("/final_data_historical-page"))),
+                        dbc.NavItem(dbc.NavLink("Candlestick graph", href="/candlestick-page",style=style("/candlestick-page"))),
+
                     ],
                     navbar=True,
                 ),
