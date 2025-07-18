@@ -40,7 +40,16 @@ def actuals_layout(periods_dict: dict) -> html.Div:
                     ], className="m-3")
                 ], width=12)
             ]),
-            html.Div(id="table-output", className="m-3", style={"width": "100%"})
+            html.Div(
+                id="table-output",
+                className="m-3",
+                style={
+                    "flexGrow": "1",
+                    "height": "calc(100vh - 150px)",  # Ajusta según el tamaño de navbar y botones
+                    "overflowY": "auto",
+                    "overflowX": "auto",
+                }
+            )
         ])
     ])
     return layout

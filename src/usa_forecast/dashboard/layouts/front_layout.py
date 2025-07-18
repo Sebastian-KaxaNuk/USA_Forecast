@@ -30,7 +30,16 @@ def front_layout(forecast_tables_dict: dict) -> html.Div:
                     ], className="m-3")
                 ], width=12)
             ]),
-            html.Div(id="table_front-output", className="m-3", style={"width": "100%"})
+            html.Div(id="table_front-output",
+                     className="m-3",
+                     # style={"width": "100%"}
+                     style={
+                         "height": "75vh",  # usa la mayor parte vertical
+                         "overflowY": "auto",
+                         "overflowX": "auto",
+                         "paddingBottom": "0px"
+                     }
+                     )
         ])
     ])
     return layout

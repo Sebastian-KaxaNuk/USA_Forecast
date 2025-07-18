@@ -102,12 +102,23 @@ def register_callback_forecast_table(app, configuration, mkt_data):
             dash_table.DataTable(
                 columns=columns,
                 data=df.to_dict("records"),
-                page_size=15,
+                page_size=40,
                 fixed_rows={"headers": True},
+                # fixed_columns={"headers": True, "data": 1},
                 filter_action="native",
                 sort_action="native",
                 sort_mode="multi",
-                style_table={'overflowX': 'auto', 'width': '100%', 'minWidth': '100%'},
+                # style_table={'overflowX': 'auto',
+                #              'width': '100%',
+                #              'minWidth': '100%'},
+                style_table={
+                    'overflowX': 'auto',
+                    'overflowY': 'auto',
+                    'maxHeight': '85vh',
+                    'height': '85vh',
+                    'width': '100%',
+                    'minWidth': '100%',
+                },
                 style_cell={
                     "textAlign": "center", "fontFamily": "Arial", "padding": "6px",
                     "whiteSpace": "normal", "minWidth": "150px", "maxWidth": "300px"

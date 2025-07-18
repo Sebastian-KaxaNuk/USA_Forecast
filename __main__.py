@@ -91,35 +91,76 @@ forecast_tables_dict[latest_timestamp.date()] = latest_forecast_table
 
 #%%
 
-app = dash.Dash(__name__, suppress_callback_exceptions=True, external_stylesheets=[dbc.themes.BOOTSTRAP])
+# app = dash.Dash(__name__, suppress_callback_exceptions=True, external_stylesheets=[dbc.themes.BOOTSTRAP])
+#
+# app.layout = html.Div([
+#     dcc.Location(id='url', refresh=False),
+#     html.Div(id="navbar-container"),
+#     html.Div(id='page-content', children=actuals_layout(final_dict)),
+#     html.Footer(
+#         html.Div(
+#             [
+#                 html.Hr(),
+#                 dcc.Markdown(
+#                 """
+#                 **USA Forecast-Dash**
+#                 """
+#                 ),
+#                 html.P(
+#                     [
+#                         html.Img(src=dash.get_asset_url("image.jpg")),
+#                         html.Span("   "),
+#                         html.A("GitHub Repository",
+#                                href="https://github.com/Sebastian-KaxaNuk/USA_Forecast", target="_blank"),
+#                     ]
+#                 ),
+#             ],
+#             style={"text-align": "center"},
+#             className="p-3",
+#         ),
+#     )
+# ])
 
-app.layout = html.Div([
-    dcc.Location(id='url', refresh=False),
-    html.Div(id="navbar-container"),
-    html.Div(id='page-content', children=actuals_layout(final_dict)),
-    html.Footer(
+current_dir = os.path.dirname(os.path.abspath(sys.executable if getattr(sys, 'frozen', False) else __file__))
+assets_folder = os.path.join(current_dir, "assets")
+
+app = dash.Dash(
+    __name__,
+    assets_folder=assets_folder,
+    suppress_callback_exceptions=True,
+    external_stylesheets=[dbc.themes.BOOTSTRAP]
+)
+
+app.layout = html.Div(
+    style={
+        "display": "flex",
+        "flexDirection": "column",
+        "minHeight": "100vh",
+    },
+    children=[
+        dcc.Location(id='url', refresh=False),
+        html.Div(id="navbar-container"),
         html.Div(
-            [
-                html.Hr(),
-                dcc.Markdown(
-                    """
-                **USA Forecast-Dash**  
-                """
-                ),
-                html.P(
-                    [
-                        html.Img(src=dash.get_asset_url("image.jpg")),
-                        html.Span("   "),
-                        html.A("GitHub Repository",
-                               href="https://github.com/Sebastian-KaxaNuk/USA_Forecast", target="_blank"),
-                    ]
-                ),
-            ],
-            style={"text-align": "center"},
-            className="p-3",
+            id='page-content',
+            style={"flex": "1", "padding": "0 20px"}
         ),
-    )
-])
+        html.Footer(
+            html.Div(
+                [
+                    html.Hr(),
+                    dcc.Markdown("**USA Forecast-Dash**"),
+                    html.P([
+                        html.Img(src=dash.get_asset_url("image.jpg")),
+                        html.Span(" "),
+                        html.A("GitHub Repository", href="https://github.com/Sebastian-KaxaNuk/USA_Forecast", target="_blank"),
+                    ])
+                ],
+                style={"text-align": "center"},
+                className="p-3"
+            )
+        )
+    ]
+)
 
 @app.callback(
     Output("navbar-container", "children"),
