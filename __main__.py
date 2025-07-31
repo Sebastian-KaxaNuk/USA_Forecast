@@ -6,7 +6,7 @@ from usa_forecast.calculations import build_forecast_summary_table as bf
 from usa_forecast.services import historical_analysis as ha
 from usa_forecast.dashboard.app_callback import app_callback
 from usa_forecast.dashboard.callbacks.target_price_table_callback import register_callback_actuals
-from usa_forecast.dashboard.layouts.target_price_table_layout import actuals_layout
+# from usa_forecast.dashboard.layouts.target_price_table_layout import actuals_layout
 from usa_forecast.dashboard.callbacks.front_callback import register_callback_forecast_table
 from usa_forecast.dashboard.callbacks.heatmap_callback import register_callback_show_p_columns
 from usa_forecast.dashboard.callbacks.plot_callback import register_callback_candlestick_chart
@@ -90,36 +90,6 @@ latest_forecast_table = bf.build_forecast_summary_table(data_dict=latest_snapsho
 forecast_tables_dict[latest_timestamp.date()] = latest_forecast_table
 
 #%%
-
-# app = dash.Dash(__name__, suppress_callback_exceptions=True, external_stylesheets=[dbc.themes.BOOTSTRAP])
-#
-# app.layout = html.Div([
-#     dcc.Location(id='url', refresh=False),
-#     html.Div(id="navbar-container"),
-#     html.Div(id='page-content', children=actuals_layout(final_dict)),
-#     html.Footer(
-#         html.Div(
-#             [
-#                 html.Hr(),
-#                 dcc.Markdown(
-#                 """
-#                 **USA Forecast-Dash**
-#                 """
-#                 ),
-#                 html.P(
-#                     [
-#                         html.Img(src=dash.get_asset_url("image.jpg")),
-#                         html.Span("   "),
-#                         html.A("GitHub Repository",
-#                                href="https://github.com/Sebastian-KaxaNuk/USA_Forecast", target="_blank"),
-#                     ]
-#                 ),
-#             ],
-#             style={"text-align": "center"},
-#             className="p-3",
-#         ),
-#     )
-# ])
 
 current_dir = os.path.dirname(os.path.abspath(sys.executable if getattr(sys, 'frozen', False) else __file__))
 assets_folder = os.path.join(current_dir, "assets")
