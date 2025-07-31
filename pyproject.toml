@@ -1,0 +1,30 @@
+[project]
+name = "USA_Forecast"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "Sebastian Blanco Abrajan", email = "sebastian.blanco@kaxanuk.mx"},
+]
+dependencies = ["pandas>=2.3.0",
+                "openpyxl>=3.1.5",
+                "dash>=3.0.4",
+                "seaborn>=0.13.2",
+                "pyarrow>=20.0.0",
+                "dash-bootstrap-components>=2.0.3",
+                "dash-core-components>=2.0.0",
+                "dash-html-components>=2.0.0",
+                "plotly>=6.1.2",
+                "matplotlib>=3.10.3",
+                "dash-table>=5.0.0",
+                ]
+requires-python = ">=3.12"
+readme = "README.md"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+
+[tool.pdm]
+distribution = true
