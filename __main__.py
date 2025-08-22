@@ -6,7 +6,6 @@ from usa_forecast.calculations import build_forecast_summary_table as bf
 from usa_forecast.services import historical_analysis as ha
 from usa_forecast.dashboard.app_callback import app_callback
 from usa_forecast.dashboard.callbacks.target_price_table_callback import register_callback_actuals
-# from usa_forecast.dashboard.layouts.target_price_table_layout import actuals_layout
 from usa_forecast.dashboard.callbacks.front_callback import register_callback_forecast_table
 from usa_forecast.dashboard.callbacks.heatmap_callback import register_callback_show_p_columns
 from usa_forecast.dashboard.callbacks.plot_callback import register_callback_candlestick_chart
@@ -75,20 +74,71 @@ for snapshot_date in final_dict.keys():
 
 #%%
 
-lista1 = list(forecast_tables_dict.keys())
-
-df1 = forecast_tables_dict[lista1[0]]
-df2 = forecast_tables_dict[lista1[1]]
-
-
-#%%
-
 latest_timestamp = max(df.index.max() for df in mkt_data.values())
 latest_snapshot = ha.extract_snapshot(data_dict=mkt_data, snapshot_date=latest_timestamp)
 
 latest_forecast_table = bf.build_forecast_summary_table(data_dict=latest_snapshot)
 
 forecast_tables_dict[latest_timestamp.date()] = latest_forecast_table
+
+#%%
+
+
+all_dates = mkt_data[next(iter(mkt_data))].index
+
+dates_for_analysis = ha.generate_summary_dates(all_dates=all_dates,
+                                               configuration=configuration)
+
+#%%
+
+
+last_date_in_data = max(
+    max(df.index) for df in mkt_data.values()
+)
+
+if last_date_in_data not in dates_for_analysis:
+    dates_for_analysis = dates_for_analysis.append(
+        pd.DatetimeIndex([last_date_in_data])
+    )
+
+#%%
+
+cols = ["Compra_Apartir_de",
+        "Precio_Minimo_Que_Puede_Llegar",
+        "Vender_Apartir_De",
+        "Precio_Maximo_Que_Puede_Llegar",
+        "Rate"]
+
+date_dict = {date: {} for date in dates_for_analysis}
+
+for ticker, df in mkt_data.items():
+    # filtrar el DataFrame del ticker para solo fechas en dates_for_analysis
+    df_filtered = df.loc[df.index.intersection(dates_for_analysis), cols]
+
+    for date, row in df_filtered.iterrows():
+        date_dict[date][ticker] = row.to_dict()
+
+for date in date_dict:
+    if date_dict[date]:
+        date_dict[date] = pd.DataFrame.from_dict(date_dict[date], orient="index")[cols]
+    else:
+        date_dict[date] = pd.DataFrame(columns=cols)
+
+
+#%%
+
+def save_daily_dict(date_dict, output_folder="Output/Daily_Price_Target_Analysis"):
+    os.makedirs(output_folder, exist_ok=True)
+    for date, df in date_dict.items():
+        if hasattr(date, "strftime"):
+            date_str = date.strftime("%Y-%m-%d")
+        else:
+            date_str = str(date).split()[0]
+
+        path = os.path.join(output_folder, f"{date_str}.csv")
+        df.to_csv(path, index=True)
+
+save_daily_dict(date_dict=date_dict, output_folder="Output/Daily_Price_Target_Analysis")
 
 #%%
 
