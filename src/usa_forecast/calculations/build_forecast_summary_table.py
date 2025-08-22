@@ -29,12 +29,20 @@ def build_forecast_summary_table(
             last_row = df.iloc[-1]
 
             close = last_row["close"]
-            high_min = last_row["MaxMin"]
+            high_min = last_row["HighMin"]
             high_max = last_row["MaxMax"]
-            low_min = last_row["MinMin"]
-            low_max = last_row["MinMax"]
+            low_min = last_row["MaxMin"]
+            low_max = last_row["MinMin"]
+            min_max = last_row["MinMax"]
 
-            vender_a_partir_de = high_min if high_min < close else high_min
+
+            #C22 ES HighMin
+            #C2 ES CLOSE
+            #C4 ES MINMAX
+
+            # vender_a_partir_de = high_min if high_min < close else min_max
+            vender_a_partir_de = min_max if high_min < close else high_min
+
             rate = (low_min / close) - 1
 
             summary_records.append({

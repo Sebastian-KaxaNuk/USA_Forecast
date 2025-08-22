@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import logging
 import pyarrow as pa
@@ -117,6 +118,18 @@ def calculate_price_targets(
     df["MaxMin"] = minpt_df.max(axis=1)
     df["AvgMin"] = minpt_df.mean(axis=1)
     df["MinMin"] = minpt_df.min(axis=1)
+
+    df["Rate_For_Max_Min"] = (df["MinMax"] - df["close"]) / df["close"]
+    df["HighMin"] = (df["52_week_low"] * df["Rate_For_Max_Min"]) + df["52_week_low"]
+    df["Vender_Apartir_De"] = np.where(df["HighMin"] < df["close"], df["MinMax"], df["HighMin"])
+    df["Rate"] = ((df["MaxMin"] / df["close"]) - 1) * 100
+
+    #@TODO: mejor reenombrar despues, no agregar porque memoria
+    df["Compra_Apartir_de"] = df["MaxMin"]
+    df["Precio_Minimo_Que_Puede_Llegar"] = df["MinMin"]
+    df["Precio_Maximo_Que_Puede_Llegar"] = df["MaxMax"]
+
+    a = 1 + 1
 
     return df
 

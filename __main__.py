@@ -10,6 +10,7 @@ from usa_forecast.dashboard.callbacks.target_price_table_callback import registe
 from usa_forecast.dashboard.callbacks.front_callback import register_callback_forecast_table
 from usa_forecast.dashboard.callbacks.heatmap_callback import register_callback_show_p_columns
 from usa_forecast.dashboard.callbacks.plot_callback import register_callback_candlestick_chart
+from usa_forecast.dashboard.callbacks.stock_analysis_callback import register_callback_market_analysis
 from dash.dependencies import Input, Output
 from usa_forecast.dashboard.dash_components.navigation import build_navbar
 
@@ -144,6 +145,7 @@ register_callback_show_p_columns(app, mkt_data)
 register_callback_actuals(app, configuration, mkt_data)
 register_callback_forecast_table(app, configuration, mkt_data)
 register_callback_candlestick_chart(app, mkt_data)
+register_callback_market_analysis(app, mkt_data)
 
 if __name__ == "__main__":
     logger.info('-----------------------------------------')
@@ -151,3 +153,10 @@ if __name__ == "__main__":
     logger.info('-----------------------------------------')
     Timer(1, open_browser).start()
     app.run(debug=False, port=8031)
+
+#%%
+
+#@TODO: DASHBOARD HEATMAP MAYOR A MENOR
+#@TODO: PESTAÑA EN TIME SERIES, SELECCIONAS TICKER Y VES DIARIO COMPRA A PARTIR DE, VENDER A PARTIR DE, ETC
+#@TODO: PESTAÑA EN TIME SERIES, SELECCIONAS CAMPO Y VES DIARIO COMPRA A PARTIR DE, VENDER A PARTIR DE, ETC pero columna ticker
+#@TODO: EL ANALISIS TARGET PRICE TABLE, GUARDARLO DIARIO EN OUTPUT
