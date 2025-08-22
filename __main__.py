@@ -42,6 +42,18 @@ if src_path not in sys.path:
 
 #%%
 
+def save_daily_dict(date_dict, output_folder="Output/Daily_Price_Target_Analysis"):
+    os.makedirs(output_folder, exist_ok=True)
+    for date, df in date_dict.items():
+        if hasattr(date, "strftime"):
+            date_str = date.strftime("%Y-%m-%d")
+        else:
+            date_str = str(date).split()[0]
+
+        path = os.path.join(output_folder, f"{date_str}.csv")
+        df.to_csv(path, index=True)
+
+#%%
 configurator = ExcelConfigurator(
     file_path='Config/parameters_configuration.xlsx',
 )
@@ -126,17 +138,6 @@ for date in date_dict:
 
 
 #%%
-
-def save_daily_dict(date_dict, output_folder="Output/Daily_Price_Target_Analysis"):
-    os.makedirs(output_folder, exist_ok=True)
-    for date, df in date_dict.items():
-        if hasattr(date, "strftime"):
-            date_str = date.strftime("%Y-%m-%d")
-        else:
-            date_str = str(date).split()[0]
-
-        path = os.path.join(output_folder, f"{date_str}.csv")
-        df.to_csv(path, index=True)
 
 save_daily_dict(date_dict=date_dict, output_folder="Output/Daily_Price_Target_Analysis")
 
