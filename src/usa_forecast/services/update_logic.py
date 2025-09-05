@@ -1,10 +1,10 @@
 # Reimport required packages and redefine the update function after reset
 import pandas as pd
 import logging
-from usa_forecast.data_download import fmp_mkt_data as fmd
-from usa_forecast.calculations import price_calculations as pc
-from usa_forecast.services import historical_analysis as ha
-from usa_forecast.calculations import lags_adding as la
+from src.usa_forecast.data_download import fmp_mkt_data as fmd
+from src.usa_forecast.calculations import price_calculations as pc
+from src.usa_forecast.services import historical_analysis as ha
+from src.usa_forecast.calculations import lags_adding as la
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 logger = logging.getLogger('myAppLogger')

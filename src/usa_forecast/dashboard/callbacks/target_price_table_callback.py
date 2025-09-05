@@ -4,7 +4,7 @@ import dash_table
 import dash_html_components as html
 import pandas as pd
 import dash
-from usa_forecast.services.update_logic import update_with_latest_data
+from src.usa_forecast.services.update_logic import update_with_latest_data
 from dash_table.Format import Format, Scheme, Symbol
 
 import logging

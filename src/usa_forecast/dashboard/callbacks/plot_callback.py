@@ -1,7 +1,7 @@
 from dash.dependencies import Input, Output, State
 import dash_html_components as html
 import dash_core_components as dcc
-from usa_forecast.plotting.candlestick_plotly import generate_candlestick_with_volume
+from src.usa_forecast.plotting.candlestick_plotly import generate_candlestick_with_volume
 
 def register_callback_candlestick_chart(app, mkt_data: dict):
     @app.callback(

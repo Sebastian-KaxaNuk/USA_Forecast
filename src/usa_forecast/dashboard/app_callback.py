@@ -2,11 +2,11 @@
 from dash.dependencies import Input, Output
 
 # Personal Modules
-from usa_forecast.dashboard.layouts.target_price_table_layout import actuals_layout
-from usa_forecast.dashboard.layouts.front_layout import front_layout
-from usa_forecast.dashboard.layouts.heatmap_layout import heatmap_layout
-from usa_forecast.dashboard.layouts.plot_layout import candlestick_layout
-from usa_forecast.dashboard.layouts.stock_analysis_layout import market_analysis_layout
+from src.usa_forecast.dashboard.layouts.target_price_table_layout import actuals_layout
+from src.usa_forecast.dashboard.layouts.front_layout import front_layout
+from src.usa_forecast.dashboard.layouts.heatmap_layout import heatmap_layout
+from src.usa_forecast.dashboard.layouts.plot_layout import candlestick_layout
+from src.usa_forecast.dashboard.layouts.stock_analysis_layout import market_analysis_layout
 
 #%%
 
