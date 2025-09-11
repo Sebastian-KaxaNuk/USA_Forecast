@@ -16,6 +16,7 @@ dependencies = ["pandas>=2.3.0",
                 "plotly>=6.1.2",
                 "matplotlib>=3.10.3",
                 "dash-table>=5.0.0",
+                "cx-Freeze>=8.4.0",
                 ]
 requires-python = ">=3.12"
 readme = "README.md"
